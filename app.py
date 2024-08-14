@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 # Initial CSS setup for light mode
 st.markdown(
@@ -22,11 +23,10 @@ st.markdown(
 )
 
 # Title
-st.markdown('<h1 class="title">Billboard Hot 100 Song Fetcher</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="title">Billboard Chart Song Fetcher</h1>', unsafe_allow_html=True)
 
 # Sidebar
 st.sidebar.title("Options")
-week_date = st.sidebar.text_input('Enter the date you want to travel to (YYYY-MM-DD):')
 dark_mode = st.sidebar.checkbox('Enable Dark Mode')
 
 # Dark Mode
@@ -43,7 +43,20 @@ if dark_mode:
     </style>
     """, unsafe_allow_html=True)
 
-# Fetch Billboard data
+# Main content
+st.markdown('<h2 class="subtitle">Find out whats hot or what was 🔥. ', unsafe_allow_html=True)
+
+# Chart selection dropdown
+chart_choice = st.selectbox(
+    "Select a chart",
+    ("Billboard Hot 100", "TikTok Billboard Top 50")
+)
+
+# Date input (calendar widget)
+selected_date = st.date_input("Select a date", value=datetime.now(), min_value=datetime(1958, 8, 4), max_value=datetime.now())
+week_date = selected_date.strftime("%Y-%m-%d")
+
+# Function to fetch data
 @st.cache_data
 def fetch_billboard_data(url):
     try:
@@ -54,9 +67,14 @@ def fetch_billboard_data(url):
         st.error(f"An error occurred: {e}")
         return None
 
+# Chart URL and logic based on selection
 if week_date:
-    url = f"https://www.billboard.com/charts/hot-100/{week_date}"
-    st.write(f"Fetching data from: {url}")
+    if chart_choice == "Billboard Hot 100":
+        url = f"https://www.billboard.com/charts/hot-100/{week_date}"
+        st.write(f"Fetching data from: {url}")
+    else:
+        url = f"https://www.billboard.com/charts/tiktok-billboard-top-50/{week_date}"
+        st.write(f"Fetching data from: {url}")
     
     with st.spinner('Fetching data...'):
         web_page = fetch_billboard_data(url)
@@ -66,28 +84,24 @@ if week_date:
         
         songs = []
         artists = []
-        tag = soup.find_all(name="li", class_="lrv-u-width-100p")
+        if chart_choice == "Billboard Hot 100":
+            tag = soup.find_all(name="li", class_="lrv-u-width-100p")
+        else:
+            tag = soup.find_all(name="li", class_="o-chart-results-list__item")
+
         for i in tag:
-            t = i.find_all(name="ul")
-            for j in t:
-                t1 = j.find_all(name="li")
-                for k in t1:
-                    t2 = k.find_all(name="h3")
-                    for l in t2:
-                        t3 = l.get_text()
-                        songs.append(str(t3).strip("\n\t"))
-                    t4 = k.find_all(name="span")
-                    for m in list(t4):
-                        t5 = m.get_text()
-                        artists.append(str(t5).strip("\n\t"))
-        
-        artists = artists[::16]
-        song_artist = [f"{songs[i]} by {artists[i]}" for i in range(len(songs))]
-        
-        if song_artist:
-            st.markdown('<h2 class="subtitle">Top Songs on the Billboard Hot 100:</h2>', unsafe_allow_html=True)
-            for song in song_artist:
-                st.write(f"- {song}")
+            song_tag = i.find(name="h3", class_="c-title")
+            artist_tag = i.find(name="span", class_="c-label")
+            if song_tag and artist_tag:
+                song = song_tag.get_text(strip=True)
+                artist = artist_tag.get_text(strip=True)
+                songs.append(song)
+                artists.append(artist)
+
+        if songs and artists:
+            st.markdown('<h2 class="subtitle">Top Songs on the Selected Billboard Chart:</h2>', unsafe_allow_html=True)
+            for song, artist in zip(songs, artists):
+                st.write(f"- {song} by {artist}")
 
             # Display a bar chart of the top 10 songs
             fig, ax = plt.subplots()
@@ -96,9 +110,9 @@ if week_date:
 
             # Provide an option to download the data as a CSV
             df = pd.DataFrame({'Song': songs, 'Artist': artists})
-            st.download_button('Download as CSV', df.to_csv(index=False).encode('utf-8'), 'billboard.csv', 'text/csv')
+            st.download_button('Download as CSV', df.to_csv(index=False).encode('utf-8'), 'billboard_chart.csv', 'text/csv')
 
         else:
-            st.write("No songs found for this date.")
+            st.write("Nothing this week, try a week before 🙏.")
     else:
-        st.write("Error fetching the Billboard Hot 100 data. Please check the date and try again.")
+        st.write("Error fetching the Billboard chart data. Please check the date and try again.")
