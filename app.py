@@ -44,7 +44,7 @@ if dark_mode:
     """, unsafe_allow_html=True)
 
 # Main content
-st.markdown('<h2 class="subtitle">Find out whats hot or what was 🔥. ', unsafe_allow_html=True)
+st.markdown('<h2 class="subtitle">Find out what\'s hot or what was 🔥.</h2>', unsafe_allow_html=True)
 
 # Chart selection dropdown
 chart_choice = st.selectbox(
@@ -67,6 +67,11 @@ def fetch_billboard_data(url):
         st.error(f"An error occurred: {e}")
         return None
 
+# Function to generate YouTube search URL
+def generate_youtube_link(song, artist):
+    search_query = f"{song} {artist} official music video"
+    return f"https://www.youtube.com/results?search_query={search_query.replace(' ', '+')}"
+
 # Chart URL and logic based on selection
 if week_date:
     if chart_choice == "Billboard Hot 100":
@@ -84,6 +89,8 @@ if week_date:
         
         songs = []
         artists = []
+        youtube_links = []
+
         if chart_choice == "Billboard Hot 100":
             tag = soup.find_all(name="li", class_="lrv-u-width-100p")
         else:
@@ -95,13 +102,16 @@ if week_date:
             if song_tag and artist_tag:
                 song = song_tag.get_text(strip=True)
                 artist = artist_tag.get_text(strip=True)
+                youtube_link = generate_youtube_link(song, artist)
+                
                 songs.append(song)
                 artists.append(artist)
+                youtube_links.append(youtube_link)
 
         if songs and artists:
             st.markdown('<h2 class="subtitle">Top Songs on the Selected Billboard Chart:</h2>', unsafe_allow_html=True)
-            for song, artist in zip(songs, artists):
-                st.write(f"- {song} by {artist}")
+            for song, artist, link in zip(songs, artists, youtube_links):
+                st.markdown(f"- {song} by {artist} [Watch on YouTube]({link})")
 
             # Display a bar chart of the top 10 songs
             fig, ax = plt.subplots()
@@ -109,7 +119,7 @@ if week_date:
             st.pyplot(fig)
 
             # Provide an option to download the data as a CSV
-            df = pd.DataFrame({'Song': songs, 'Artist': artists})
+            df = pd.DataFrame({'Song': songs, 'Artist': artists, 'YouTube Link': youtube_links})
             st.download_button('Download as CSV', df.to_csv(index=False).encode('utf-8'), 'billboard_chart.csv', 'text/csv')
 
         else:
