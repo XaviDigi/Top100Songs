@@ -19,7 +19,7 @@ This project is a **Streamlit web application** that allows users to explore his
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/billboard-chart-fetcher.git
+   git clone https://github.com/xavidigi/billboard-chart-fetcher.git
    cd billboard-chart-fetcher
    
 2. Install dependencies:
