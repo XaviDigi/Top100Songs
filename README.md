@@ -4,7 +4,10 @@ This project is a **Streamlit web application** that allows users to explore his
 
 ## 🚀 Live Demo
 
-[🔴 **Live Demo**](https://your-live-app-link.com](https://celest23-top100songs-app-lvaseu.streamlit.app/)
+## 🚀 Live Demo
+
+[![Live](https://celest23-top100songs-app-lvaseu.streamlit.app/)
+
 
 
 ## ✨ Features
