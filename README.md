@@ -2,6 +2,11 @@
 
 This project is a **Streamlit web application** that allows users to explore historical and current Billboard charts, including the **Billboard Hot 100** and the **TikTok Billboard Top 50**. Select a date to view the top songs for that week, with integrated YouTube links for easy access. Additionally, you can download the chart data as a CSV.
 
+## 🚀 Live Demo
+
+[🔴 **Live Demo**](https://your-live-app-link.com](https://celest23-top100songs-app-lvaseu.streamlit.app/)
+
+
 ## ✨ Features
 - **Light and Dark Mode**: Toggle between light and dark modes for a comfortable viewing experience.
 - **Chart Selection**: Choose between two popular Billboard charts: **Billboard Hot 100** and **TikTok Billboard Top 50**.
