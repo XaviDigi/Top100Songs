@@ -4,9 +4,12 @@ This project is a **Streamlit web application** that allows users to explore his
 
 ## 🚀 Live Demo
 
+[![Live](https://img.shields.io/badge/Live%20Demo-Click%20Here-brightgreen)](https://celest23-top100songs-app-lvaseu.streamlit.app/)
+
+
 ## 🚀 Live Demo
 
-[![Live](https://celest23-top100songs-app-lvaseu.streamlit.app/)
+[![Live]()
 
 
 
