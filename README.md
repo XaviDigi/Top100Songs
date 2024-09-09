@@ -36,7 +36,9 @@ This project is a **Streamlit web application** that allows users to explore his
 
 ## 🌟 Example
 
-![App Screenshot](images/topsong1.png)
+![App Screenshot](images/topsongs1.png)
+![App Screenshot](images/topsongs2.png)
+![App Screenshot](images/topsongs3.png)
 
 ---
 
